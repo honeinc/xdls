@@ -32,6 +32,91 @@ xdls.setItem( 'key', 'value', function( error ) {
 
 ```
 
+# METHODS
+
+XDLS is effectively a wrapper around [localforage](https://github.com/mozilla/localForage):
+
+## getItem
+
+Gets the specified item:
+
+```javascript
+xdls.getItem( 'foo', function( error, value ) {
+    if ( error ) {
+        console.error( error );
+        return;
+    }
+    
+    console.log( 'foo: ' + value );
+} );
+```
+
+## setItem
+
+Sets the specified item:
+
+```javascript
+xdls.setItem( 'foo', JSON.stringify( { yak: 'baz' } ), function( error ) {
+    if ( error ) {
+        console.error( error );
+    }
+} );
+```
+
+## removeItem
+
+Removes the specified item: 
+
+```javascript
+xdls.removeItem( 'foo', function( error ) {
+    if ( error ) {
+        console.error( error );
+    }
+} );
+```
+
+## clear
+
+Clears all items:
+
+```javascript
+xdls.clear( function( error ) {
+    if ( error ) {
+        console.error( error );
+    }
+} );
+```
+
+## length
+
+Gets the number of keys stored:
+
+```javascript
+xdls.length( function( error, len ) {
+    if ( error ) {
+        console.error( error );
+        return;
+    }
+
+    console.log( 'Num keys: ' + len );
+} );
+```
+
+## keys
+
+Gets a list of keys in storage:
+
+```javascript
+xdls.keys( function( error, keys ) {
+    if ( error ) {
+        console.error( error );
+        return;
+    }
+
+    console.log( 'keys:\n' + keys.join( '\n' ) );
+} );
+```
+
 # INSTALLATION
 
 You'll need to place xdls.html somewhere on the domain you'd like to use to share data. Then, in whatever client code you're developing, you'll need to include XDLS via something like browserify.
