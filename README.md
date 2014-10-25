@@ -1,6 +1,4 @@
-XDLS - Cross-Domain Local Storage
-
-====
+# XDLS - Cross-Domain Local Storage
 
 Allows for storing data across domains.
 
@@ -15,7 +13,12 @@ var xdls = new XDLS( {
 } );
 
 xdls.setItem( 'key', 'value', function( error ) {
-    console.log( 'key/value stored' );
+    if ( error ) {
+        console.error( error );
+        return;
+    }
+
+    console.log( 'key/value stored into yourdomain.com' );
 
     xdls.getItem( 'key', function( error, value ) {
         if ( error ) {
@@ -23,7 +26,7 @@ xdls.setItem( 'key', 'value', function( error ) {
             return;
         }
         
-        console.log( 'got value: ' + value );
+        console.log( 'got value from yourdomain.com: ' + value );
     } );
 } );
 
