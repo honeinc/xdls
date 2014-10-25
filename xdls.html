@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+    <body>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/localforage/1.1.1/localforage.js"></script>
+        <script>
+            var PREFIX = 'xdls:';
+
+            function onLocalForageComplete( event, data, error, result ) {
+                if ( error ) {
+                    event.source.postMessage( PREFIX + JSON.stringify( {
+                        id: data.id,
+                        error: 'localforage error',
+                        message: error.message || error
+                    } ), event.origin );
+                    return;
+                }
+
+                event.source.postMessage( PREFIX + JSON.stringify( {
+                    id: data.id,
+                    result: result
+                } ), event.origin );
+            }
+
+            function onMessage( event ) {
+                if ( event.data.indexOf( PREFIX ) !== 0 ) {
+                    return;
+                }
+
+                // remove the xdls: header and parse
+                try {
+                    var data = JSON.parse( event.data.substring( PREFIX.length ) );
+                }
+                catch( ex ) {
+                    event.source.postMessage( PREFIX + JSON.stringify( {
+                        error: 'invalid xdls message',
+                        message: 'Could not parse xdls message: ' + event.data
+                    } ), event.origin );
+                    return;
+                }
+
+                var method = data.method;
+
+                if ( !localforage.hasOwnProperty( method ) ) {
+                    event.source.postMessage( PREFIX + JSON.stringify( {
+                        id: data.id,
+                        error: 'invalid method',
+                        message: 'Invalid xdls method specified: ' + method
+                    } ), event.origin );
+                    return;
+                }
+
+                var arguments = data.arguments || [];
+                arguments.push( onLocalForageComplete.bind( null, event, data ) );
+                localforage[ method ].apply( localforage, data.arguments );
+            }
+
+            if( window.addEventListener ) {
+                window.addEventListener( 'message', onMessage, false );
+            }
+            else if ( window.attachEvent ) {
+                window.attachEvent( 'onmessage', onMessage );
+            }
+        </script>
+    </body>
+</html>
