@@ -2,6 +2,8 @@
 
 module.exports = XDLS;
 
+var md5 = require( 'md5' );
+
 var PREFIX = 'xdls:';
 
 // must match localforage
@@ -47,13 +49,26 @@ XDLS.prototype.init = function() {
         throw new Error( 'XDLS requires both postMossage and JSON support.' );
     }
 
-    self._iframe = document.createElement( 'iframe' );
-    self._iframe.id = 'xdls';
-    self._iframe.style.cssText = "width:1px; height:1px; display: none;";
-    document.body.appendChild( self._iframe );
-
     var onLoaded = self._onLoaded.bind( self );
     var onMessage = self._onMessage.bind( self );
+
+    var iframeID = 'xdls-' + md5.digest_s( self.origin + self.path );
+    
+    var existingIframe = document.getElementById( iframeID );
+    if ( existingIframe ) {
+        self._iframe = existingIframe;
+        if ( self._iframe.dataset.loaded ) {
+            onLoaded();
+        }
+    }
+    else {
+        self._iframe = document.createElement( 'iframe' );
+        self._iframe.id = iframeID;
+        self._iframe.dataset.origin = self.origin;
+        self._iframe.dataset.path = self.path;
+        self._iframe.style.cssText = "width:1px; height:1px; display: none;";
+        document.body.appendChild( self._iframe );
+    }
 
     if ( window.addEventListener ) {
         self._iframe.addEventListener( 'load', onLoaded, false );
@@ -67,13 +82,16 @@ XDLS.prototype.init = function() {
         throw new Error( 'XDLS could not properly bind for event handling.' );
     }
 
-    self._iframe.src = self.origin + self.path;
+    if ( !existingIframe ) {
+        self._iframe.src = self.origin + self.path;
+    }
 };
 
 XDLS.prototype._onLoaded = function() {
     var self = this;
     
     self.ready = true;
+    self._iframe.dataset.loaded = true;
     
     var message;
     while ( ( message = self.queue.shift() ) ) {
