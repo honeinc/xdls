@@ -1,6 +1,6 @@
 {
   "name": "xdls",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A cross-domain local storage library.",
   "repository": {
     "type": "git",
@@ -32,6 +32,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
+    "dataset": "^0.3.0",
     "localforage": "^1.1.1",
     "md5": "^1.0.0"
   }

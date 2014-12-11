@@ -3,6 +3,7 @@
 module.exports = XDLS;
 
 var md5 = require( 'md5' );
+var dataset = require( 'dataset' );
 
 var PREFIX = 'xdls:';
 
@@ -57,15 +58,15 @@ XDLS.prototype.init = function() {
     var existingIframe = document.getElementById( iframeID );
     if ( existingIframe ) {
         self._iframe = existingIframe;
-        if ( self._iframe.dataset.loaded ) {
+        if ( dataset( self._iframe, 'loaded' ) ) {
             onLoaded();
         }
     }
     else {
         self._iframe = document.createElement( 'iframe' );
         self._iframe.id = iframeID;
-        self._iframe.dataset.origin = self.origin;
-        self._iframe.dataset.path = self.path;
+        dataset( self._iframe, 'origin', self.origin );
+        dataset( self._iframe, 'path', self.path );
         self._iframe.style.cssText = "width:1px; height:1px; display: none;";
         document.body.appendChild( self._iframe );
     }
@@ -91,7 +92,7 @@ XDLS.prototype._onLoaded = function() {
     var self = this;
     
     self.ready = true;
-    self._iframe.dataset.loaded = true;
+    dataset( self._iframe, 'loaded', true );
     
     var message;
     while ( ( message = self.queue.shift() ) ) {
