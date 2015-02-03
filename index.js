@@ -65,6 +65,7 @@ XDLS.prototype.init = function() {
     else {
         self._iframe = document.createElement( 'iframe' );
         self._iframe.id = iframeID;
+        self._iframe.setAttribute( 'sandbox', 'allow-scripts allow-same-origin' );
         dataset( self._iframe, 'origin', self.origin );
         dataset( self._iframe, 'path', self.path );
         self._iframe.style.cssText = "width:1px; height:1px; display: none;";

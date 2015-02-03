@@ -4,6 +4,10 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/localforage/1.2.1/localforage.min.js"></script>
         <script>
             var PREFIX = 'xdls:';
+            localforage.config( {
+                size: 4500000, // safari seems to complain now with the default size so back off a bit
+                name: 'XDLS'
+            } );
 
             function onLocalForageComplete( event, data, error, result ) {
                 if ( error ) {
