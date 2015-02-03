@@ -1,6 +1,6 @@
 {
   "name": "xdls",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A cross-domain local storage library.",
   "repository": {
     "type": "git",
@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "dataset": "^0.3.0",
-    "localforage": "^1.1.1",
     "md5": "^1.0.0"
   }
 }
