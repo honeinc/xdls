@@ -18,6 +18,8 @@ var METHODS = [
     'setItem'  
 ];
 
+var _instanceId = 0;
+
 function XDLS( options ) {
     this.origin = options.origin;
     this.path = options.path;
@@ -25,6 +27,7 @@ function XDLS( options ) {
     this.queue = [];
     this.messageId = 0;
     this.callbacks = {};
+    this.instanceId = _instanceId++;
     
     if ( !( this.origin && this.path ) ) {
         throw new Error( 'XDLS needs both an origin and a path specified in the constructor options.' );
@@ -113,7 +116,8 @@ XDLS.prototype._handleMethod = function() {
         callback = _args.pop();
     }
 
-    var id = ++self.messageId;
+    ++self.messageId;
+    var id = self.instanceId + '.' + self.messageId;
     
     if ( callback ) {
         self.callbacks[ id ] = callback;
