@@ -72,14 +72,14 @@ XDLS.prototype.init = function() {
         dataset( self._iframe, 'origin', self.origin );
         dataset( self._iframe, 'path', self.path );
         self._iframe.style.cssText = 'width:1px; height:1px; display: none;';
-        if ( document.readyState !== 'complete' ) {
-            document.onload = function() {
+        (function _addIframe() {
+            if ( document.body ) {
                 document.body.appendChild( self._iframe );
-            };
-        }
-        else {
-            document.body.appendChild( self._iframe );
-        }
+                return;
+            }
+            
+            setTimeout( _addIframe, 100 );
+        })();
     }
 
     if ( window.addEventListener ) {
