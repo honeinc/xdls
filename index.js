@@ -56,7 +56,7 @@ XDLS.prototype.init = function() {
     var onLoaded = self._onLoaded.bind( self );
     var onMessage = self._onMessage.bind( self );
 
-    var iframeID = 'xdls-' + md5.digest_s( self.origin + self.path );
+    var iframeID = 'xdls-' + md5.digest_s( self.host + self.path );
     
     var existingIframe = document.getElementById( iframeID );
     if ( existingIframe ) {
