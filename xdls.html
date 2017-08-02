@@ -1,74 +1,76 @@
 <!doctype html>
 <html>
-    <body>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/localforage/1.2.1/localforage.min.js"></script>
-        <script>
-            var PREFIX = 'xdls:';
-            localforage.config( {
-                size: 4000000, // safari seems to complain now with the default size so back off a bit
-                name: 'XDLS'
-            } );
 
-            function onLocalForageComplete( event, data, error, result ) {
-                if ( error ) {
-                    event.source.postMessage( PREFIX + JSON.stringify( {
-                        id: data.id,
-                        error: 'localforage error',
-                        message: error.message || error
-                    } ), event.origin );
-                    return;
-                }
+<body>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/localforage/1.2.1/localforage.min.js"></script>
+    <script>
+        var PREFIX = 'xdls:';
+        localforage.config({
+            size: 4000000, // safari seems to complain now with the default size so back off a bit
+            name: 'XDLS'
+        });
 
-                event.source.postMessage( PREFIX + JSON.stringify( {
+        function onLocalForageComplete(event, data, error, result) {
+            if (error) {
+                event.source.postMessage(PREFIX + JSON.stringify({
                     id: data.id,
-                    result: result
-                } ), event.origin );
+                    error: 'localforage error',
+                    message: error.message || error
+                }), event.origin);
+                return;
             }
 
-            function onMessage( event ) {
-                if ( event.data.indexOf( PREFIX ) !== 0 ) {
-                    return;
-                }
+            event.source.postMessage(PREFIX + JSON.stringify({
+                id: data.id,
+                result: result
+            }), event.origin);
+        }
 
-                // remove the xdls: header and parse
-                try {
-                    var data = JSON.parse( event.data.substring( PREFIX.length ) );
-                }
-                catch( ex ) {
-                    event.source.postMessage( PREFIX + JSON.stringify( {
-                        error: 'invalid xdls message',
-                        message: 'Could not parse xdls message: ' + event.data
-                    } ), event.origin );
-                    return;
-                }
-
-                var method = data.method;
-
-                if ( !localforage.hasOwnProperty( method ) ) {
-                    event.source.postMessage( PREFIX + JSON.stringify( {
-                        id: data.id,
-                        error: 'invalid method',
-                        message: 'Invalid xdls method specified: ' + method
-                    } ), event.origin );
-                    return;
-                }
-
-                try {
-                    var arguments = data.arguments || [];
-                    arguments.push( onLocalForageComplete.bind( null, event, data ) );
-                    localforage[ method ].apply( localforage, data.arguments );
-                }
-                catch ( ex ) {
-                    onLocalForageComplete( event, data, ex );
-                }
+        function onMessage(event) {
+            if (!event.data.indexOf || event.data.indexOf(PREFIX) !== 0) {
+                return;
             }
 
-            if( window.addEventListener ) {
-                window.addEventListener( 'message', onMessage, false );
+            // remove the xdls: header and parse
+            try {
+                var data = JSON.parse(event.data.substring(PREFIX.length));
             }
-            else if ( window.attachEvent ) {
-                window.attachEvent( 'onmessage', onMessage );
+            catch (ex) {
+                event.source.postMessage(PREFIX + JSON.stringify({
+                    error: 'invalid xdls message',
+                    message: 'Could not parse xdls message: ' + event.data
+                }), event.origin);
+                return;
             }
-        </script>
-    </body>
+
+            var method = data.method;
+
+            if (!localforage.hasOwnProperty(method)) {
+                event.source.postMessage(PREFIX + JSON.stringify({
+                    id: data.id,
+                    error: 'invalid method',
+                    message: 'Invalid xdls method specified: ' + method
+                }), event.origin);
+                return;
+            }
+
+            try {
+                var arguments = data.arguments || [];
+                arguments.push(onLocalForageComplete.bind(null, event, data));
+                localforage[method].apply(localforage, data.arguments);
+            }
+            catch (ex) {
+                onLocalForageComplete(event, data, ex);
+            }
+        }
+
+        if (window.addEventListener) {
+            window.addEventListener('message', onMessage, false);
+        }
+        else if (window.attachEvent) {
+            window.attachEvent('onmessage', onMessage);
+        }
+    </script>
+</body>
+
 </html>
