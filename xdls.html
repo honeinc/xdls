@@ -26,7 +26,7 @@
             }
 
             function onMessage( event ) {
-                if ( event.data.indexOf( PREFIX ) !== 0 ) {
+                if ( !event.data || !event.data.indexOf || event.data.indexOf( PREFIX ) !== 0 ) {
                     return;
                 }
 
